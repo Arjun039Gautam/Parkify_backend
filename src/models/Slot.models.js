@@ -10,18 +10,23 @@ const slotSchema = new mongoose.Schema({
         enum: ['2-wheeler', '4-wheeler'], 
         required: true 
     }, 
+    vehicleId: {
+        type: String,
+        default: null
+    },
     status: { 
         type: String, 
         enum: ['available', 'booked'], 
         default: 'available' 
     },
-    bookedBy: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        refPath: 'bookedByModel' 
+    bookedBy: {
+        type: String,
+        default: null
     },
-    bookedByModel: { 
-        type: String, 
-        enum: ['User', 'GuestBooking'] 
+    bookedByModel: {
+        type: String,
+        enum: ['User', 'GuestBooking'], // ✅ Fix: allow 'GuestBooking'
+        default: null
     },
     bookedUntil: { 
         type: Date

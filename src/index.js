@@ -6,7 +6,7 @@ import { initializeSlots } from "./utils/initSlots.js";  // import your init fun
 dotenv.config({
     path: './env'
 })
-
+console.log('SERVER STARTED');
 connectDB()
 .then(async () => {
     // Initialize slots before server starts

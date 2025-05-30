@@ -2,6 +2,7 @@ import express from 'express';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { GuestOTP } from '../models/GuestOTP.models.js';
+import verifiedGuests from '../utils/verifiedGuests.js';
 
 dotenv.config();
 const router = express.Router();
@@ -14,9 +15,14 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS
   }
 });
-
+console.log('✅ Send otp route loaded');
 // Send OTP
 router.post('/send', async (req, res) => {
+  console.log('✅ Send otp route loaded 2.0');
+  console.error('>>> Debug Message');
+  process.stdout.write('>>> Log message\n');
+
+
   const { emailOrPhone } = req.body;
 
   if (!emailOrPhone) {
@@ -45,30 +51,28 @@ router.post('/send', async (req, res) => {
 });
 
 // Verify OTP
-// Option 1: Add verified email to a temporary Set (in-memory - good for testing)
-const verifiedEmails = new Set(); // Move to top of file if you want to persist during runtime
-
 router.post('/verify', async (req, res) => {
   const { emailOrPhone, otp } = req.body;
 
   try {
-    const found = await GuestOTP.findOne({ emailOrPhone, otp });
-    if (!found) {
+    const record = await GuestOTP.findOne({ emailOrPhone, otp });
+
+    if (!record) {
       return res.status(400).json({ error: 'Invalid OTP' });
     }
 
-    // Delete OTP after successful verification
-    await GuestOTP.deleteOne({ _id: found._id });
+    record.verified = true;
+    await record.save();  // This must save the verified flag!
 
-    // Add to verified guest list
-    verifiedEmails.add(emailOrPhone);
+    // You can also add a console log here to confirm:
+    console.log(`Verified OTP for ${emailOrPhone}`);
 
     res.status(200).json({ message: 'OTP verified successfully' });
   } catch (err) {
-    res.status(500).json({ error: 'OTP verification failed' });
+    console.error('OTP verification failed:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 
 export default router;
