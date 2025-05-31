@@ -9,7 +9,7 @@ import guestRoutes from './routes/guest.routes.js';
 import bookingRoutes from './routes/booking.routes.js';
 
 const app = express()
-const allowedOrigins = ['http://localhost:3000', 'https://parkify-frontend-eta.vercel.app/'];
+const allowedOrigins = ['http://localhost:3000', 'https://parkify-frontend-eta.vercel.app'];
 
 app.use(cors({
   origin: function(origin, callback) {
