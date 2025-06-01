@@ -25,6 +25,10 @@ const guestBookingSchema = new mongoose.Schema({
     createdAt: { 
         type: Date, 
         default: Date.now 
+    },
+    amount: {
+        type: Number,
+        required: true
     }
 }, {timestamps : true})
 

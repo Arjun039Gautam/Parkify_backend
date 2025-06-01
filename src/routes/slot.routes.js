@@ -4,6 +4,7 @@ import { User } from '../models/User.models.js';
 import { GuestBooking } from '../models/GuestBooking.models.js';
 import { GuestOTP } from '../models/GuestOTP.models.js';
 import { UserBooking } from '../models/UserBooking.models.js';
+import { calculateAmount } from '../utils/amountCalculator.js';
 
 const router = express.Router();
 
@@ -28,15 +29,17 @@ router.get('/', async (req, res) => {
 
 // Book slot for registered user
 router.post('/book/user', async (req, res) => {
-  const { vehicleType, email, vehicleId, bookedUntil } = req.body;
+  const { vehicleType, email, vehicleId, bookedUntil, passType } = req.body;
 
-  if (!vehicleType || !email || !vehicleId) {
-    return res.status(400).json({ error: 'vehicleType, email, and vehicleId are required' });
+  if (!vehicleType || !email || !vehicleId || !passType) {
+    return res.status(400).json({ error: 'vehicleType, email, vehicleId, and passType are required' });
   }
 
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const amount = calculateAmount({ isGuest: false, vehicleType, passType });
 
     const slot = await Slot.findOneAndUpdate(
       { vehicleType, status: 'available' },
@@ -56,13 +59,16 @@ router.post('/book/user', async (req, res) => {
       email,
       vehicleId,
       vehicleType,
+      passType,
       bookedSlotId: slot._id,
-      bookedUntil: slot.bookedUntil
+      bookedUntil: slot.bookedUntil,
+      amount
     });
 
     res.status(201).json({
       message: 'Slot booked successfully for user',
-      slotNumber: slot.slotNumber
+      slotNumber: slot.slotNumber,
+      amount
     });
 
   } catch (error) {
@@ -83,6 +89,8 @@ router.post('/book/guest', async (req, res) => {
       return res.status(403).json({ error: 'Guest not verified by OTP' });
     }
 
+    const amount = calculateAmount({ isGuest: true, vehicleType });
+
     const slot = await Slot.findOneAndUpdate(
       { vehicleType, status: 'available' },
       {
@@ -102,14 +110,17 @@ router.post('/book/guest', async (req, res) => {
       emailOrPhone,
       vehicleId,
       vehicleType,
-      bookedSlotId: slot._id
+      bookedSlotId: slot._id,
+      bookedUntil: slot.bookedUntil,
+      amount
     });
 
     await GuestOTP.deleteMany({ emailOrPhone });
 
     res.status(201).json({
       message: 'Slot booked successfully for guest',
-      slotNumber: slot.slotNumber
+      slotNumber: slot.slotNumber,
+      amount
     });
 
   } catch (error) {

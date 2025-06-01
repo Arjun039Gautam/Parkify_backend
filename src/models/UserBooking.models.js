@@ -5,6 +5,10 @@ const userBookingSchema = new mongoose.Schema({
     vehicleType: { type: String, required: true },
     bookedSlotId: { type: mongoose.Schema.Types.ObjectId, ref: 'Slot', required: true },
     bookedUntil: { type: Date },
+    amount: {
+        type: Number,
+        required: true
+    }
 }, { timestamps: true });
 
 export const UserBooking = mongoose.model('UserBooking', userBookingSchema)
