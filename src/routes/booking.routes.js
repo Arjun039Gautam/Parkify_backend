@@ -27,7 +27,8 @@ router.get('/all', async (req, res) => {
         email: booking.email,
         vehicleId: booking.vehicleId,
         vehicleType: booking.vehicleType,
-        dateTime: booking.createdAt,
+        booking_dateTime: booking.createdAt,
+        expire_dateTime: booking.bookedUntil,
         slotNumber: booking.bookedSlotId.slotNumber
       });
     });
@@ -39,7 +40,8 @@ router.get('/all', async (req, res) => {
         email: booking.emailOrPhone,
         vehicleId: booking.vehicleId,
         vehicleType: booking.vehicleType,
-        dateTime: booking.createdAt,
+        booking_dateTime: booking.createdAt,
+        expire_dateTime: booking.bookedUntil,
         slotNumber: booking.bookedSlotId.slotNumber
       });
     });

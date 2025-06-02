@@ -26,6 +26,7 @@ const guestBookingSchema = new mongoose.Schema({
         type: Date, 
         default: Date.now 
     },
+    bookedUntil: { type: Date },
     amount: {
         type: Number,
         required: true

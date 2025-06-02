@@ -7,6 +7,7 @@ import slotRoutes from './routes/slot.routes.js';
 import guestOtpRoutes from './routes/guest.routes.js';
 import guestRoutes from './routes/guest.routes.js';
 import bookingRoutes from './routes/booking.routes.js';
+import { freeExpiredSlotsJob } from './cron/freeExpiredSlots.js';
 
 const app = express()
 const allowedOrigins = ['http://localhost:3000', 'https://parkify-frontend-eta.vercel.app'];
@@ -31,6 +32,8 @@ app.use('/api/slots', slotRoutes);
 app.use('/api/guest/otp', guestOtpRoutes);
 app.use('/guest', guestRoutes);
 app.use('/api/bookings', bookingRoutes);
+
+freeExpiredSlotsJob.start(); // start the cron job
 
 
 export { app }
