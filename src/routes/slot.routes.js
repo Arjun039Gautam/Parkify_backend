@@ -11,7 +11,7 @@ const router = express.Router();
 // GET all slots
 router.get('/', async (req, res) => {
   try {
-    const slots = await Slot.find();
+    const slots = await Slot.find().sort({ slotNumber: 1 });
 
     const formatted = slots.map(slot => ({
       slotId: slot._id,
