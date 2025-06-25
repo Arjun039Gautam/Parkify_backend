@@ -37,10 +37,20 @@ router.post('/send', async (req, res) => {
 
     // Send OTP via email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"Parkify 🚗" <${process.env.EMAIL_USER}>`,
       to: emailOrPhone,
-      subject: 'Your OTP Code',
-      text: `Your OTP code is: ${otp}`
+      subject: 'Parkify Guest OTP - Secure Access Code',
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; background-color: #f4f4f4; border-radius: 8px; border: 1px solid #ccc;">
+          <h2 style="color: #2c3e50;">Welcome to <span style="color: #007BFF;">Parkify (Guest)</span>!</h2>
+          <p>To access our services as a guest, please use the following One-Time Password (OTP):</p>
+          <div style="font-size: 30px; font-weight: bold; color: #007BFF; margin: 20px 0;">${otp}</div>
+          <p>This OTP is valid for the next <strong>10 minutes</strong>. Please do not share this code with anyone.</p>
+          <p>If you did not request this, you can safely ignore this email.</p>
+          <hr style="margin: 20px 0;" />
+          <p style="font-size: 14px; color: #555;">Regards,<br/>The Parkify Team</p>  
+        </div>
+      `
     });
 
     res.status(200).json({ message: 'OTP sent successfully to email' });
